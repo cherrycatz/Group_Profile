@@ -32,16 +32,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .grp-lbl{font-size:11px;color:var(--muted);margin-bottom:1px;}
 .topbar-t{font-size:15px;font-weight:700;}
 .topbar-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.me-chip{display:flex;align-items:center;gap:6px;background:var(--bg);border-radius:99px;padding:5px 10px 5px 5px;cursor:pointer;}
-.me-chip:hover{background:#e8e7e3;}
-.chip-ava{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;}
-.chip-nm{font-size:12px;color:var(--sub);font-weight:500;}
+
 .ibtn{background:none;border:1px solid var(--border-s);border-radius:99px;padding:5px 11px;font-size:12px;color:var(--sub);cursor:pointer;font-family:inherit;}
 .content{padding:16px;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
 
-.mcard{border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;cursor:pointer;transition:all .25s ease;position:relative;overflow:hidden;}
-.mcard:hover,.mcard.touched{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.12);border-color:transparent;z-index:2;}
+.mcard{border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;cursor:pointer;transition:all .25s ease;position:relative;overflow:hidden;will-change:transform;}
+.mcard.active{transform:scale(1.04);box-shadow:0 8px 28px rgba(0,0,0,0.15);border-color:transparent;z-index:2;}
+.grid.has-active .mcard:not(.active){opacity:0.55;transform:scale(0.97);}
 .mcard.mine{border-color:rgba(55,138,221,0.4);}
 .mcard-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .mcard-ava{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;background:rgba(255,255,255,0.6);}
@@ -51,7 +49,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .ctag{font-size:10px;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,0.55);color:var(--sub);}
 .no-info{font-size:10px;color:var(--muted);font-style:italic;}
 .mcard-detail{max-height:0;overflow:hidden;transition:max-height .3s ease,opacity .3s ease;opacity:0;}
-.mcard:hover .mcard-detail,.mcard.touched .mcard-detail{max-height:200px;opacity:1;}
+.mcard.active .mcard-detail{max-height:200px;opacity:1;}
 .mcard-divider{height:1px;background:rgba(0,0,0,0.08);margin:8px 0;}
 .mcard-section{margin-bottom:6px;}
 .mcard-slbl{font-size:10px;color:var(--sub);font-weight:500;margin-bottom:2px;opacity:.8;}
@@ -155,11 +153,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div class="topbar">
     <div class="topbar-l"><div class="grp-lbl" id="grp-lbl"></div><div class="topbar-t" id="room-title" style="cursor:default;">멤버 프로필</div></div>
     <div class="topbar-r">
-      <div class="me-chip" id="me-chip-btn">
-        <div class="chip-ava" id="chip-ava"></div>
-        <span class="chip-nm" id="chip-nm"></span>
-        <span style="font-size:11px;color:var(--muted);">✏️</span>
-      </div>
+
       <button class="ibtn" id="share-btn">🔗 초대</button>
       <button class="ibtn" id="leave-btn">나가기</button>
     </div>
@@ -327,7 +321,6 @@ function enterMain(code,name,nick){
   $('login-wrap').style.display='none';
   $('main-wrap').style.display='block';
   $('grp-lbl').textContent=`그룹 코드: ${code}`;
-  $('chip-nm').textContent=nick;
   // 방 제목 불러오기
   onValue(ref(db,`groups/${gid}/name`), snap=>{
     const title=snap.val()||'멤버 프로필';
@@ -337,7 +330,6 @@ function enterMain(code,name,nick){
   unsub=onValue(ref(db,`groups/${gid}/members`),snap=>{
     members=snap.val()||{};
     const m=members[me];
-    if(m){$('chip-ava').textContent=m.emoji; $('chip-ava').style.background=m.cardBg||PRESETS[0];}
     renderGrid();
     if(openNick&&members[openNick])refreshSheet();
   });
@@ -372,18 +364,7 @@ $('share-btn').addEventListener('click',()=>{
   navigator.clipboard?.writeText(`그룹 코드: ${gid}`).then(()=>toast(`코드 ${gid} 복사됨! 카톡에 공유하세요 🔗`)).catch(()=>toast(`그룹 코드: ${gid}`));
 });
 
-$('me-chip-btn').addEventListener('click',()=>{
-  // 본인 프로필 시트 열고 인라인 수정 표시
-  openSheet(me);
-  setTimeout(()=>{
-    const wrap=$('nick-inline-wrap');
-    if(wrap&&wrap.style.display==='none'){
-      $('nick-inline-inp').value=members[me]?.nick||me;
-      wrap.style.display='block';
-      $('nick-inline-inp').focus();
-    }
-  },150);
-});
+
 // nick-overlay removed
 async function saveNickname(newNick){
   if(!newNick||!newNick.trim()){toast('닉네임을 입력해주세요');return;}
@@ -398,7 +379,6 @@ async function saveNickname(newNick){
   }
   me=newNick;
   if(openNick===oldNick) openNick=newNick;
-  $('chip-nm').textContent=newNick;
   localStorage.setItem('ps',JSON.stringify({gid,gname:'',nick:newNick}));
   if($('nick-inline-wrap')) $('nick-inline-wrap').style.display='none';
   toast('닉네임 변경됐어요! ✅');
@@ -439,13 +419,36 @@ function renderGrid(){
   }).join('');
   if(sorted.length<8)h+=`<button class="add-card" id="add-btn"><span style="font-size:22px;">+</span><span>멤버 추가</span></button>`;
   $('card-grid').innerHTML=h;
+  const grid=$('card-grid');
   document.querySelectorAll('.mcard').forEach(c=>{
     let touchTimer=null, touchMoved=false, touchStartTime=0;
 
-    // 데스크탑: 클릭 → 시트, 우클릭 → 내보내기(방장만)
+    function activateCard(){
+      // 이미 active면 시트 열기
+      if(c.classList.contains('active')){
+        openSheet(c.dataset.nick);
+        return;
+      }
+      // 다른 카드 active 해제
+      document.querySelectorAll('.mcard').forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+      grid.classList.add('has-active');
+      // 바깥 클릭시 해제
+      setTimeout(()=>{
+        document.addEventListener('click', function deactivate(e){
+          if(!c.contains(e.target)){
+            c.classList.remove('active');
+            grid.classList.remove('has-active');
+            document.removeEventListener('click', deactivate);
+          }
+        });
+      }, 50);
+    }
+
+    // 데스크탑
     c.addEventListener('click', e=>{
       if('ontouchstart' in window) return;
-      openSheet(c.dataset.nick);
+      activateCard();
     });
     c.addEventListener('contextmenu', e=>{
       e.preventDefault();
@@ -458,12 +461,11 @@ function renderGrid(){
       }
     });
 
-    // 모바일: 짧은 탭 = 시트 열기, 꾹 누름(600ms) = 내보내기(방장만)
+    // 모바일: 탭 = 카드 확장/시트, 꾹 누름 = 내보내기(방장만)
     c.addEventListener('touchstart', e=>{
       touchMoved=false;
       touchStartTime=Date.now();
       const nick=c.dataset.nick;
-      c.classList.add('touched');
       touchTimer=setTimeout(()=>{
         if(!touchMoved){
           const myData=members[me];
@@ -485,11 +487,9 @@ function renderGrid(){
     c.addEventListener('touchend', e=>{
       clearTimeout(touchTimer);
       const elapsed=Date.now()-touchStartTime;
-      // 짧은 탭(400ms 이하)이면 시트 열기
       if(!touchMoved && elapsed<400){
-        openSheet(c.dataset.nick);
+        activateCard();
       }
-      setTimeout(()=>c.classList.remove('touched'), 400);
     },{passive:true});
   });
   updateRoomTitleCursor();
