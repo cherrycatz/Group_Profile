@@ -9,49 +9,83 @@
 :root{--bg:#f5f4f0;--surface:#fff;--border:rgba(0,0,0,0.08);--border-s:rgba(0,0,0,0.15);--text:#1a1a1a;--sub:#666;--muted:#aaa;--blue:#185FA5;--blue-l:#E6F1FB;--accent:#378ADD;--r:14px;--rs:8px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-#login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
-.card{background:var(--surface);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:340px;box-shadow:0 2px 24px rgba(0,0,0,0.07);}
-.logo{font-size:42px;text-align:center;margin-bottom:12px;}
-.ttl{font-size:20px;font-weight:700;text-align:center;margin-bottom:6px;}
-.sub{font-size:13px;color:var(--sub);text-align:center;margin-bottom:1.75rem;line-height:1.6;}
-.lbl{display:block;font-size:11px;font-weight:500;color:var(--sub);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
+
+/* 공통 */
 .inp{width:100%;border:1px solid var(--border-s);border-radius:var(--rs);padding:10px 12px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;}
 .inp:focus{border-color:var(--accent);}
-.sec{margin-bottom:1rem;}
-.divider{display:flex;align-items:center;gap:10px;margin:1.25rem 0;}
-.divider span{font-size:11px;color:var(--muted);white-space:nowrap;}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
 .btn{width:100%;border:none;border-radius:var(--rs);padding:11px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;}
 .btn-blue{background:var(--blue);color:#fff;}.btn-blue:hover{background:#0C447C;}
 .btn-out{background:none;border:1px solid var(--border-s);color:var(--sub);}.btn-out:hover{background:var(--bg);}
+.btn-sg{background:none;border:1px solid var(--border-s);border-radius:var(--rs);padding:8px 16px;font-size:13px;color:var(--sub);cursor:pointer;font-family:inherit;}
+.btn-sb{background:var(--blue);border:none;border-radius:var(--rs);padding:8px 16px;font-size:13px;color:#fff;font-weight:500;cursor:pointer;font-family:inherit;}
 .row{display:flex;gap:8px;}.row .inp{flex:1;}
 .btn-join{background:var(--blue);border:none;border-radius:var(--rs);padding:10px 16px;color:#fff;font-size:13px;font-family:inherit;cursor:pointer;}
+.divider{display:flex;align-items:center;gap:10px;margin:1.25rem 0;}
+.divider span{font-size:11px;color:var(--muted);white-space:nowrap;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.sec{margin-bottom:1rem;}
+.lbl{display:block;font-size:11px;font-weight:500;color:var(--sub);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
+
+/* 로딩 */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:12px;}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── 그룹 목록 화면 ── */
+#groups-screen{display:none;min-height:100vh;padding:0;}
+.gs-header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
+.gs-title{font-size:18px;font-weight:700;}
+.gs-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.gs-content{padding:20px;}
+.gs-section-title{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;}
+.group-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.group-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;}
+.group-item:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.07);}
+.group-item-ava{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.group-item-info{flex:1;}
+.group-item-name{font-size:14px;font-weight:700;margin-bottom:2px;}
+.group-item-meta{font-size:11px;color:var(--muted);}
+.group-item-arrow{font-size:16px;color:var(--muted);}
+.gs-actions{display:flex;flex-direction:column;gap:10px;}
+.gs-action-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;}
+.gs-action-card:hover{border-color:var(--accent);}
+.gs-action-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.gs-action-label{font-size:14px;font-weight:500;}
+.gs-action-desc{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* 닉네임 입력 모달 */
+.nick-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.nick-modal-bg.open{display:flex;}
+.nick-modal{background:var(--surface);border-radius:20px;padding:1.75rem;width:100%;max-width:300px;}
+.nick-modal h3{font-size:15px;font-weight:700;margin-bottom:6px;}
+.nick-modal p{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+
+/* ── 메인 화면 ── */
 #main-wrap{display:none;}
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
-.topbar-l{display:flex;flex-direction:column;}
+.topbar-l{display:flex;align-items:center;gap:10px;}
+.back-btn{background:none;border:none;font-size:20px;cursor:pointer;padding:0;line-height:1;color:var(--sub);}
+.topbar-titles{display:flex;flex-direction:column;}
 .grp-lbl{font-size:11px;color:var(--muted);margin-bottom:1px;}
 .topbar-t{font-size:15px;font-weight:700;}
-.topbar-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-
+.topbar-r{display:flex;align-items:center;gap:8px;}
 .ibtn{background:none;border:1px solid var(--border-s);border-radius:99px;padding:5px 11px;font-size:12px;color:var(--sub);cursor:pointer;font-family:inherit;}
 .content{padding:16px;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;align-items:start;}
 
+/* 카드 */
 .mcard{border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;cursor:pointer;transition:all .25s ease;position:relative;overflow:hidden;will-change:transform;}
-.mcard{position:relative;}
+.mcard.mine{border-color:rgba(55,138,221,0.4);}
 .mcard.active{box-shadow:0 8px 28px rgba(0,0,0,0.15);border-color:transparent;z-index:10;}
 .grid.has-active .mcard:not(.active){opacity:0.6;}
-.mcard.mine{border-color:rgba(55,138,221,0.4);}
 .mcard-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .mcard-ava{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;background:rgba(255,255,255,0.6);}
 .mcard-nm{font-size:13px;font-weight:700;margin-bottom:1px;}
-.mcard-id{font-size:10px;color:var(--sub);opacity:.8;}
 .mcard-chips{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:4px;}
 .ctag{font-size:10px;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,0.55);color:var(--sub);}
 .no-info{font-size:10px;color:var(--muted);font-style:italic;}
 .mcard-detail{max-height:0;overflow:hidden;transition:max-height .3s ease,opacity .3s ease;opacity:0;}
 .mcard.active .mcard-detail{max-height:300px;opacity:1;}
-.mcard.active{position:relative;}
 .mcard-divider{height:1px;background:rgba(0,0,0,0.08);margin:8px 0;}
 .mcard-section{margin-bottom:6px;}
 .mcard-slbl{font-size:10px;color:var(--sub);font-weight:500;margin-bottom:2px;opacity:.8;}
@@ -59,6 +93,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .add-card{border:1.5px dashed var(--border-s);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;color:var(--muted);font-size:12px;min-height:100px;transition:all .15s;background:none;width:100%;}
 .add-card:hover{color:var(--sub);border-color:var(--accent);}
 
+/* 프로필 시트 */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-end;justify-content:center;}
 @media(min-width:500px){.overlay{align-items:center;padding:1rem;}}
 .overlay.open{display:flex;}
@@ -70,7 +105,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .sh-ava{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;}
 .sh-ava-badge{position:absolute;bottom:-1px;right:-1px;background:var(--blue);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;}
 .sh-nm{font-size:16px;font-weight:700;}
-.sh-id{font-size:12px;color:var(--sub);}
 .tabs{display:flex;border-bottom:1px solid var(--border);}
 .tab{flex:1;padding:10px 0;text-align:center;font-size:12px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;}
 .tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:700;}
@@ -83,11 +117,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .field label{display:block;font-size:11px;color:var(--sub);margin-bottom:4px;font-weight:500;}
 .field input,.field select,.field textarea{width:100%;border:1px solid var(--border-s);border-radius:var(--rs);padding:8px 10px;font-size:13px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;resize:none;}
 .field textarea{height:70px;}
-/* 저장(왼쪽) + 닫기(오른쪽) */
 .sh-foot{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
-.btn-sg{background:none;border:1px solid var(--border-s);border-radius:var(--rs);padding:8px 16px;font-size:13px;color:var(--sub);cursor:pointer;font-family:inherit;}
-.btn-sb{background:var(--blue);border:none;border-radius:var(--rs);padding:8px 16px;font-size:13px;color:#fff;font-weight:500;cursor:pointer;font-family:inherit;}
 
+/* 꾸미기 피커 */
 .p-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem;}
 .p-overlay.open{display:flex;}
 .p-box{background:var(--surface);border-radius:20px;padding:1.5rem;width:100%;max-width:340px;max-height:90vh;overflow-y:auto;}
@@ -96,7 +128,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .p-prev-ava{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
 .p-prev-card{flex:1;border-radius:10px;padding:10px;}
 .p-prev-nm{font-size:12px;font-weight:700;}
-.p-prev-id{font-size:10px;opacity:.7;}
 .psec{margin-bottom:16px;}
 .psec label{font-size:11px;color:var(--sub);display:block;margin-bottom:8px;font-weight:500;}
 .egrid{display:flex;flex-wrap:wrap;gap:6px;}
@@ -110,8 +141,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .cpre.on{border-color:var(--blue);}
 .pfooter{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
 
-
-
+/* 코드 모달 */
 .c-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:1rem;}
 .c-overlay.open{display:flex;}
 .c-box{background:var(--surface);border-radius:20px;padding:2rem;width:100%;max-width:320px;text-align:center;}
@@ -124,38 +154,77 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;border-radius:99px;padding:10px 20px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999;white-space:nowrap;}
 .toast.show{opacity:1;}
-#loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:12px;}
-.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
 <div id="loading"><div class="spinner"></div><div style="font-size:13px;color:#aaa;">연결 중...</div></div>
 
-<div id="login-wrap">
-  <div class="card">
-    <div class="logo">👥</div>
-    <div class="ttl">멤버 프로필</div>
-    <div class="sub">그룹 코드로 입장하거나<br>새 그룹을 만들어보세요</div>
-    <div class="sec"><label class="lbl">내 닉네임</label><input class="inp" id="nick-inp" placeholder="예: 민준, Laon..." maxlength="10"/></div>
-    <div class="divider"><span>그룹 선택</span></div>
-    <div class="sec">
-      <label class="lbl">그룹 코드로 입장</label>
-      <div class="row">
-        <input class="inp" id="code-inp" placeholder="초대 코드..." maxlength="8" style="text-transform:uppercase;"/>
-        <button class="btn-join" id="join-btn">입장</button>
+<!-- 그룹 목록 화면 -->
+<div id="groups-screen">
+  <div class="gs-header">
+    <div>
+      <div class="gs-title">내 그룹</div>
+      <div class="gs-sub" id="gs-sub">참여 중인 그룹을 선택하세요</div>
+    </div>
+  </div>
+  <div class="gs-content">
+    <div id="group-list-wrap" style="display:none;">
+      <div class="gs-section-title">참여 중인 그룹</div>
+      <div class="group-list" id="group-list"></div>
+    </div>
+    <div class="gs-section-title">그룹 추가</div>
+    <div class="gs-actions">
+      <div class="gs-action-card" id="btn-create">
+        <div class="gs-action-icon" style="background:#E6F1FB;">➕</div>
+        <div>
+          <div class="gs-action-label">새 그룹 만들기</div>
+          <div class="gs-action-desc">새로운 그룹을 만들고 코드를 공유하세요</div>
+        </div>
+      </div>
+      <div class="gs-action-card" id="btn-join-show">
+        <div class="gs-action-icon" style="background:#E1F5EE;">🔑</div>
+        <div>
+          <div class="gs-action-label">코드로 입장</div>
+          <div class="gs-action-desc">초대 코드를 입력해서 그룹에 참여하세요</div>
+        </div>
       </div>
     </div>
-    <div style="text-align:center;font-size:12px;color:var(--muted);margin:12px 0;">또는</div>
-    <button class="btn btn-out" id="create-btn">+ 새 그룹 만들기</button>
+    <!-- 코드 입력 영역 (숨김) -->
+    <div id="join-form" style="display:none;margin-top:16px;background:var(--surface);border-radius:var(--r);padding:16px;border:1px solid var(--border);">
+      <div class="sec"><label class="lbl">초대 코드</label>
+        <div class="row">
+          <input class="inp" id="code-inp" placeholder="코드 입력..." maxlength="8" style="text-transform:uppercase;"/>
+          <button class="btn-join" id="join-btn">입장</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- 닉네임 입력 모달 -->
+<div class="nick-modal-bg" id="nick-modal-bg">
+  <div class="nick-modal">
+    <h3 id="nick-modal-title">닉네임 입력</h3>
+    <p id="nick-modal-desc">이 그룹에서 사용할 닉네임을 입력하세요</p>
+    <div class="field"><input class="inp" id="nick-modal-inp" placeholder="닉네임..." maxlength="10"/></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-sg" style="flex:1;" id="nick-modal-cancel">취소</button>
+      <button class="btn-sb" style="flex:1;" id="nick-modal-confirm">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 메인 화면 -->
 <div id="main-wrap">
   <div class="topbar">
-    <div class="topbar-l"><div class="grp-lbl" id="grp-lbl"></div><div class="topbar-t" id="room-title" style="cursor:default;">멤버 프로필</div></div>
+    <div class="topbar-l">
+      <button class="back-btn" id="back-btn">←</button>
+      <div class="topbar-titles">
+        <div class="grp-lbl" id="grp-lbl"></div>
+        <div class="topbar-t" id="room-title">멤버 프로필</div>
+      </div>
+    </div>
     <div class="topbar-r">
-
       <button class="ibtn" id="share-btn">🔗 초대</button>
       <button class="ibtn" id="leave-btn">나가기</button>
     </div>
@@ -163,17 +232,19 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div class="content"><div class="grid" id="card-grid"></div></div>
 </div>
 
+<!-- 코드 안내 -->
 <div class="c-overlay" id="c-overlay">
   <div class="c-box">
     <div class="c-icon">🎉</div>
     <h3>그룹이 만들어졌어요!</h3>
-    <p>아래 코드를 단톡방에 공유하세요<br>친구들이 이 코드로 입장할 수 있어요</p>
+    <p>아래 코드를 단톡방에 공유하세요</p>
     <div class="c-disp"><div class="c-cl">그룹 초대 코드</div><div class="c-cv" id="disp-code"></div></div>
     <button class="btn btn-blue" id="copy-btn" style="margin-bottom:10px;">📋 코드 복사하기</button>
     <button class="btn btn-out" id="enter-btn">입장하기 →</button>
   </div>
 </div>
 
+<!-- 프로필 시트 -->
 <div class="overlay" id="profile-overlay">
   <div class="sheet">
     <div class="sh-head">
@@ -187,10 +258,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
             <div class="sh-nm" id="sh-nm"></div>
             <button id="id-edit-btn" style="display:none;background:none;border:none;cursor:pointer;font-size:14px;color:var(--muted);padding:0;line-height:1;">✏️</button>
           </div>
-          <div id="sh-id" style="display:none;"></div>
-          <div style="display:none">
-          </div>
-          <!-- 인라인 닉네임 수정 영역 (본인만) -->
           <div id="nick-inline-wrap" style="display:none;margin-top:8px;">
             <div style="display:flex;gap:6px;">
               <input id="nick-inline-inp" class="inp" style="flex:1;padding:7px 10px;font-size:13px;" maxlength="10"/>
@@ -207,7 +274,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <button class="tab" data-tab="2">소개</button>
     </div>
     <div class="tbody" id="tab-body"></div>
-    <!-- 저장(왼쪽) 닫기(오른쪽) — 본인일 때만 저장 표시 -->
     <div class="sh-foot">
       <button class="btn-sb" id="save-btn" style="display:none;">저장</button>
       <button class="btn-sg" id="close-btn">닫기</button>
@@ -215,6 +281,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
+<!-- 꾸미기 피커 -->
 <div class="p-overlay" id="p-overlay">
   <div class="p-box">
     <h3>꾸미기</h3>
@@ -222,7 +289,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div class="p-prev-ava" id="p-prev-ava"></div>
       <div class="p-prev-card" id="p-prev-card">
         <div class="p-prev-nm" id="p-prev-nm"></div>
-        <div class="p-prev-id" id="p-prev-id"></div>
       </div>
     </div>
     <div class="psec"><label>이모지</label><div class="egrid" id="egrid"></div></div>
@@ -240,13 +306,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
-
-
 <div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, onValue, update, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const db = getDatabase(initializeApp({
   apiKey:"AIzaSyCaWkZTIBLiAF-4FU3OJyEsOQSoonCikUk",
@@ -262,141 +326,200 @@ const EM=['😊','😎','🥳','🤓','😈','👻','🐱','🐶','🦊','🐸',
 const PRESETS=['#B5D4F4','#9FE1CB','#F4C0D1','#FAC775','#C0DD97','#F5C4B3','#CECBF6','#ffd6d6','#d6f0ff','#fff3cc','#e8d6ff','#f0f0f0'];
 const MB=['INTJ','INTP','ENTJ','ENTP','INFJ','INFP','ENFJ','ENFP','ISTJ','ISFJ','ESTJ','ESFJ','ISTP','ISFP','ESTP','ESFP'];
 
+// 내 그룹 목록: [{gid, gname, nick}]
+let myGroups = [];
 let me=null, gid=null, members={}, openNick=null, curTab=0, pE='', pC='', unsub=null, pending=null;
-let draft={}; // 탭 이동시 임시 저장
+let draft={};
+let nickModalCallback=null;
+
 const $=id=>document.getElementById(id);
 const toast=msg=>{const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);};
 const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
 const rand=()=>Math.random().toString(36).slice(2,8).toUpperCase();
 
-$('loading').style.display='none';
-try{const s=JSON.parse(localStorage.getItem('ps')||'null');if(s)enterMain(s.gid,s.gname,s.nick);}catch(e){localStorage.removeItem('ps');}
+// localStorage에서 그룹 목록 불러오기
+function loadGroups(){
+  try{ return JSON.parse(localStorage.getItem('myGroups')||'[]'); }catch(e){ return []; }
+}
+function saveGroups(groups){
+  localStorage.setItem('myGroups', JSON.stringify(groups));
+}
 
-$('create-btn').addEventListener('click',async()=>{
-  const nick=$('nick-inp').value.trim();
+// ── 초기화 ──
+$('loading').style.display='none';
+myGroups = loadGroups();
+showGroupsScreen();
+
+function showGroupsScreen(){
+  $('main-wrap').style.display='none';
+  $('groups-screen').style.display='block';
+  renderGroupList();
+}
+
+function renderGroupList(){
+  const wrap=$('group-list-wrap');
+  const list=$('group-list');
+  if(myGroups.length===0){
+    wrap.style.display='none';
+    return;
+  }
+  wrap.style.display='block';
+  list.innerHTML=myGroups.map((g,i)=>`
+    <div class="group-item" data-idx="${i}">
+      <div class="group-item-ava" style="background:${PRESETS[i%PRESETS.length]};">👥</div>
+      <div class="group-item-info">
+        <div class="group-item-name">${esc(g.gname||g.gid)}</div>
+        <div class="group-item-meta">${esc(g.nick)} · 코드: ${g.gid}</div>
+      </div>
+      <div class="group-item-arrow">›</div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.group-item').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const g=myGroups[parseInt(el.dataset.idx)];
+      enterMain(g.gid, g.gname, g.nick);
+    });
+  });
+}
+
+// ── 닉네임 모달 ──
+function askNick(title, desc, callback){
+  $('nick-modal-title').textContent=title;
+  $('nick-modal-desc').textContent=desc;
+  $('nick-modal-inp').value='';
+  nickModalCallback=callback;
+  $('nick-modal-bg').classList.add('open');
+  setTimeout(()=>$('nick-modal-inp').focus(),100);
+}
+$('nick-modal-cancel').addEventListener('click',()=>$('nick-modal-bg').classList.remove('open'));
+$('nick-modal-confirm').addEventListener('click',()=>{
+  const nick=$('nick-modal-inp').value.trim();
   if(!nick){toast('닉네임을 입력해주세요');return;}
-  const code=rand(), name=nick+'의 그룹';
-  const md={nick, id:'@'+nick.toLowerCase().replace(/\s+/g,''), emoji:EM[0], cardBg:PRESETS[0], mbti:'', location:'', games:'', intro:'', isOwner:true};
-  try{
-    await set(ref(db,`groups/${code}`),{name, owner:nick, members:{[nick]:md}});
-    localStorage.setItem('ps',JSON.stringify({gid:code,gname:name,nick}));
-    pending={code,name,nick};
-    $('disp-code').textContent=code;
-    $('c-overlay').classList.add('open');
-  }catch(e){toast('오류: '+e.message);console.error(e);}
+  $('nick-modal-bg').classList.remove('open');
+  if(nickModalCallback) nickModalCallback(nick);
+});
+$('nick-modal-inp').addEventListener('keydown',e=>{if(e.key==='Enter'){$('nick-modal-confirm').click();}});
+
+// ── 새 그룹 만들기 ──
+$('btn-create').addEventListener('click',()=>{
+  askNick('새 그룹 만들기','이 그룹에서 사용할 닉네임을 입력하세요', async(nick)=>{
+    const code=rand(), name=nick+'의 그룹';
+    const md={nick, id:'@'+nick.toLowerCase().replace(/\s+/g,''), emoji:EM[0], cardBg:PRESETS[0], mbti:'', location:'', games:'', intro:'', isOwner:true};
+    try{
+      await set(ref(db,`groups/${code}`),{name, owner:nick, members:{[nick]:md}});
+      const g={gid:code, gname:name, nick};
+      myGroups.push(g);
+      saveGroups(myGroups);
+      pending={code,name,nick};
+      $('disp-code').textContent=code;
+      $('c-overlay').classList.add('open');
+    }catch(e){toast('오류: '+e.message);}
+  });
 });
 
+// ── 코드 입장 ──
+$('btn-join-show').addEventListener('click',()=>{
+  const form=$('join-form');
+  form.style.display=form.style.display==='none'?'block':'none';
+  if(form.style.display==='block') $('code-inp').focus();
+});
+$('join-btn').addEventListener('click',joinGroup);
+$('code-inp').addEventListener('keydown',e=>{if(e.key==='Enter')joinGroup();});
+
+function joinGroup(){
+  const code=$('code-inp').value.trim().toUpperCase();
+  if(!code){toast('코드를 입력해주세요');return;}
+  // 이미 참여 중인 그룹인지 확인
+  const existing=myGroups.find(g=>g.gid===code);
+  if(existing){
+    enterMain(existing.gid, existing.gname, existing.nick);
+    return;
+  }
+  get(ref(db,`groups/${code}`)).then(snap=>{
+    const data=snap.val();
+    if(!data){toast('그룹을 찾을 수 없어요');return;}
+    askNick('그룹 입장', `"${data.name||code}"에서 사용할 닉네임을 입력하세요`, async(nick)=>{
+      const cnt=data.members?Object.keys(data.members).length:0;
+      if(!data.members?.[nick]){
+        if(cnt>=8){toast('멤버가 꽉 찼어요');return;}
+        await update(ref(db,`groups/${code}/members`),{[nick]:{nick, id:'@'+nick.toLowerCase().replace(/\s+/g,''), emoji:EM[cnt%EM.length], cardBg:PRESETS[cnt%PRESETS.length], mbti:'', location:'', games:'', intro:'', isOwner:false}});
+      } else {
+        toast('기존 프로필로 입장해요 😊');
+      }
+      const g={gid:code, gname:data.name||code, nick};
+      myGroups.push(g);
+      saveGroups(myGroups);
+      enterMain(code, data.name||code, nick);
+    });
+  }).catch(()=>toast('그룹을 찾을 수 없어요'));
+}
+
+// ── 코드 모달 ──
 $('copy-btn').addEventListener('click',()=>{
   const code=$('disp-code').textContent;
   navigator.clipboard?.writeText(code).then(()=>toast(`코드 ${code} 복사됨! 카톡에 붙여넣기 🔗`)).catch(()=>toast(`코드: ${code}`));
 });
 $('enter-btn').addEventListener('click',()=>{
   $('c-overlay').classList.remove('open');
-  if(pending)enterMain(pending.code,pending.name,pending.nick);
+  if(pending) enterMain(pending.code,pending.name,pending.nick);
 });
 
-$('join-btn').addEventListener('click',joinGroup);
-$('code-inp').addEventListener('keydown',e=>{if(e.key==='Enter')joinGroup();});
-$('nick-inp').addEventListener('keydown',e=>{if(e.key==='Enter')$('code-inp').focus();});
-
-function joinGroup(){
-  const nick=$('nick-inp').value.trim(), code=$('code-inp').value.trim().toUpperCase();
-  if(!nick){toast('닉네임을 입력해주세요');return;}
-  if(!code){toast('그룹 코드를 입력해주세요');return;}
-  onValue(ref(db,`groups/${code}`),async snap=>{
-    const data=snap.val();
-    if(!data){toast('그룹을 찾을 수 없어요');return;}
-    const cnt=data.members?Object.keys(data.members).length:0;
-    if(!data.members?.[nick]){
-      if(cnt>=8){toast('멤버가 꽉 찼어요');return;}
-      await update(ref(db,`groups/${code}/members`),{[nick]:{nick, id:'@'+nick.toLowerCase().replace(/\s+/g,''), emoji:EM[cnt%EM.length], cardBg:PRESETS[cnt%PRESETS.length], mbti:'', location:'', games:'', intro:'', isOwner:false}});
-    } else {
-      toast('기존 프로필로 입장해요 😊');
-    }
-    localStorage.setItem('ps',JSON.stringify({gid:code,gname:data.name,nick}));
-    enterMain(code,data.name,nick);
-  },{onlyOnce:true});
-}
-
+// ── 메인 진입 ──
 function enterMain(code,name,nick){
   gid=code; me=nick;
-  $('login-wrap').style.display='none';
+  $('groups-screen').style.display='none';
   $('main-wrap').style.display='block';
-  $('grp-lbl').textContent=`그룹 코드: ${code}`;
-  // 방 제목 불러오기
-  onValue(ref(db,`groups/${gid}/name`), snap=>{
-    const title=snap.val()||'멤버 프로필';
-    $('room-title').textContent=title;
-  });
-  if(unsub)unsub();
+  $('grp-lbl').textContent=`코드: ${code}`;
+  if(unsub){ off(ref(db,`groups/${gid}/members`)); unsub=null; }
+  // 방 제목 실시간
+  onValue(ref(db,`groups/${gid}/name`),snap=>{ $('room-title').textContent=snap.val()||'멤버 프로필'; });
   unsub=onValue(ref(db,`groups/${gid}/members`),snap=>{
     members=snap.val()||{};
-    const m=members[me];
     renderGrid();
     if(openNick&&members[openNick])refreshSheet();
   });
+  // 그룹 이름 업데이트
+  onValue(ref(db,`groups/${gid}/name`),snap=>{
+    const n=snap.val();
+    if(n){
+      const idx=myGroups.findIndex(g=>g.gid===gid);
+      if(idx>=0){ myGroups[idx].gname=n; saveGroups(myGroups); }
+    }
+  },{onlyOnce:true});
 }
 
+// ← 뒤로가기
+$('back-btn').addEventListener('click',()=>{
+  if(unsub){ off(ref(db,`groups/${gid}/members`)); unsub=null; }
+  $('join-form').style.display='none';
+  $('code-inp').value='';
+  showGroupsScreen();
+});
+
+// 나가기 (그룹 목록에서 제거)
 $('leave-btn').addEventListener('click',()=>{
-  if(!confirm('그룹에서 나가시겠어요?'))return;
-  if(unsub)unsub();
-  localStorage.removeItem('ps');
-  me=null;gid=null;members={};
-  $('main-wrap').style.display='none';
-  $('login-wrap').style.display='flex';
+  if(!confirm('이 그룹에서 나가시겠어요?\n목록에서 삭제되지만 언제든 코드로 다시 입장할 수 있어요'))return;
+  myGroups=myGroups.filter(g=>g.gid!==gid);
+  saveGroups(myGroups);
+  if(unsub){ off(ref(db,`groups/${gid}/members`)); unsub=null; }
+  showGroupsScreen();
 });
 
-$('room-title').addEventListener('click',()=>{
-  // members 로드 완료 후에 isOwner 체크
-  const m=members[me];
-  if(!m||!m.isOwner) return; // 방장 아니면 아무 동작 없음
-  const current=$('room-title').textContent;
-  const newTitle=prompt('방 제목을 입력하세요', current);
-  if(!newTitle||!newTitle.trim())return;
-  set(ref(db,`groups/${gid}/name`), newTitle.trim())
-    .then(()=>toast('방 제목 변경됐어요! ✅'));
-});
-// 방장일 때만 커서 변경
-function updateRoomTitleCursor(){
-  const m=members[me];
-  $('room-title').style.cursor=(m&&m.isOwner)?'pointer':'default';
-}
-
+// 초대
 $('share-btn').addEventListener('click',()=>{
   navigator.clipboard?.writeText(`그룹 코드: ${gid}`).then(()=>toast(`코드 ${gid} 복사됨! 카톡에 공유하세요 🔗`)).catch(()=>toast(`그룹 코드: ${gid}`));
 });
 
-
-// nick-overlay removed
-async function saveNickname(newNick){
-  if(!newNick||!newNick.trim()){toast('닉네임을 입력해주세요');return;}
-  newNick=newNick.trim();
-  const finalId='@'+newNick.toLowerCase().replace(/\s+/g,'');
-  const oldNick=me;
-  const oldData=members[oldNick]||{};
-  const newData={...oldData, nick:newNick, id:finalId};
-  await set(ref(db,`groups/${gid}/members/${newNick}`), newData);
-  if(oldNick!==newNick){
-    await set(ref(db,`groups/${gid}/members/${oldNick}`), null);
-  }
-  me=newNick;
-  if(openNick===oldNick) openNick=newNick;
-  localStorage.setItem('ps',JSON.stringify({gid,gname:'',nick:newNick}));
-  if($('nick-inline-wrap')) $('nick-inline-wrap').style.display='none';
-  toast('닉네임 변경됐어요! ✅');
-}
-
-$('nick-inline-save').addEventListener('click',()=>{
-  saveNickname($('nick-inline-inp').value);
-});
-$('nick-inline-inp').addEventListener('keydown',e=>{
-  if(e.key==='Enter') saveNickname($('nick-inline-inp').value);
-  if(e.key==='Escape') $('nick-inline-wrap').style.display='none';
-});
-$('nick-inline-cancel').addEventListener('click',()=>{
-  $('nick-inline-wrap').style.display='none';
+// 방 제목 수정 (방장만)
+$('room-title').addEventListener('click',()=>{
+  const m=members[me]; if(!m||!m.isOwner)return;
+  const cur=$('room-title').textContent;
+  const t=prompt('방 제목을 입력하세요',cur);
+  if(!t||!t.trim())return;
+  set(ref(db,`groups/${gid}/name`),t.trim()).then(()=>toast('방 제목 변경됐어요! ✅'));
 });
 
+// ── 카드 렌더 ──
 function renderGrid(){
   const sorted=Object.values(members).sort((a,b)=>(b.isOwner||0)-(a.isOwner||0));
   let h=sorted.map(m=>{
@@ -404,16 +527,11 @@ function renderGrid(){
     const bg=m.cardBg||PRESETS[0];
     const chips=[m.mbti,m.location].filter(Boolean);
     const hasDetail=m.games||m.intro;
-    const detailHtml=hasDetail?`
-      <div class="mcard-detail">
-        <div class="mcard-divider"></div>
-        ${m.games?`<div class="mcard-section"><div class="mcard-slbl">관심사</div><div class="mcard-stxt">${esc(m.games)}</div></div>`:''}
-        ${m.intro?`<div class="mcard-section"><div class="mcard-slbl">소개</div><div class="mcard-stxt">${esc(m.intro)}</div></div>`:''}
-      </div>`:'';
+    const detailHtml=hasDetail?`<div class="mcard-detail"><div class="mcard-divider"></div>${m.games?`<div class="mcard-section"><div class="mcard-slbl">관심사</div><div class="mcard-stxt">${esc(m.games)}</div></div>`:''} ${m.intro?`<div class="mcard-section"><div class="mcard-slbl">소개</div><div class="mcard-stxt">${esc(m.intro)}</div></div>`:''}</div>`:'';
     return `<div class="mcard${mine?' mine':''}" data-nick="${esc(m.nick)}" style="background:${bg};">
       <div class="mcard-top">
         <div class="mcard-ava">${m.emoji}</div>
-        <div><div class="mcard-nm">${m.nick}${m.isOwner?' 👑':''}${mine?' ✏️':''}</div><div class="mcard-id">${m.id}</div></div>
+        <div><div class="mcard-nm">${m.nick}${m.isOwner?' 👑':''}</div></div>
       </div>
       <div class="mcard-chips">${chips.length?chips.map(c=>`<span class="ctag">${c}</span>`).join(''):'<span class="no-info">프로필 없음</span>'}</div>
       ${detailHtml}
@@ -421,95 +539,72 @@ function renderGrid(){
   }).join('');
   if(sorted.length<8)h+=`<button class="add-card" id="add-btn"><span style="font-size:22px;">+</span><span>멤버 추가</span></button>`;
   $('card-grid').innerHTML=h;
+  updateRoomTitleCursor();
+
   const grid=$('card-grid');
   document.querySelectorAll('.mcard').forEach(c=>{
     let touchTimer=null, touchMoved=false, touchStartTime=0;
-
     function activateCard(){
-      // 이미 active면 시트 열기
-      if(c.classList.contains('active')){
-        openSheet(c.dataset.nick);
-        return;
-      }
-      // 다른 카드 active 해제
+      if(c.classList.contains('active')){openSheet(c.dataset.nick);return;}
       document.querySelectorAll('.mcard').forEach(x=>x.classList.remove('active'));
       c.classList.add('active');
       grid.classList.add('has-active');
-      // 바깥 클릭시 해제
       setTimeout(()=>{
-        document.addEventListener('click', function deactivate(e){
-          if(!c.contains(e.target)){
-            c.classList.remove('active');
-            grid.classList.remove('has-active');
-            document.removeEventListener('click', deactivate);
-          }
+        document.addEventListener('click',function deact(e){
+          if(!c.contains(e.target)){c.classList.remove('active');grid.classList.remove('has-active');document.removeEventListener('click',deact);}
         });
-      }, 50);
+      },50);
     }
-
-    // 데스크탑
-    c.addEventListener('click', e=>{
-      if('ontouchstart' in window) return;
-      activateCard();
-    });
-    c.addEventListener('contextmenu', e=>{
+    c.addEventListener('click',e=>{if('ontouchstart' in window)return; activateCard();});
+    c.addEventListener('contextmenu',e=>{
       e.preventDefault();
       const nick=c.dataset.nick;
       const myData=members[me];
-      if(!myData||!myData.isOwner||nick===me) return;
+      if(!myData||!myData.isOwner||nick===me)return;
       if(confirm(`'${nick}'님을 내보낼까요?`)){
-        set(ref(db,`groups/${gid}/members/${nick}`), null)
-          .then(()=>toast(`${nick}님을 내보냈어요`));
+        set(ref(db,`groups/${gid}/members/${nick}`),null).then(()=>toast(`${nick}님을 내보냈어요`));
       }
     });
-
-    // 모바일: 탭 = 카드 확장/시트, 꾹 누름 = 내보내기(방장만)
-    c.addEventListener('touchstart', e=>{
-      touchMoved=false;
-      touchStartTime=Date.now();
+    c.addEventListener('touchstart',e=>{
+      touchMoved=false; touchStartTime=Date.now();
       const nick=c.dataset.nick;
       touchTimer=setTimeout(()=>{
         if(!touchMoved){
           const myData=members[me];
           if(myData&&myData.isOwner&&nick!==me){
             if(confirm(`'${nick}'님을 내보낼까요?`)){
-              set(ref(db,`groups/${gid}/members/${nick}`), null)
-                .then(()=>toast(`${nick}님을 내보냈어요`));
+              set(ref(db,`groups/${gid}/members/${nick}`),null).then(()=>toast(`${nick}님을 내보냈어요`));
             }
           }
         }
-      }, 600);
+      },600);
     },{passive:true});
-
-    c.addEventListener('touchmove', ()=>{
-      touchMoved=true;
+    c.addEventListener('touchmove',()=>{touchMoved=true;clearTimeout(touchTimer);},{passive:true});
+    c.addEventListener('touchend',e=>{
       clearTimeout(touchTimer);
-    },{passive:true});
-
-    c.addEventListener('touchend', e=>{
-      clearTimeout(touchTimer);
-      const elapsed=Date.now()-touchStartTime;
-      if(!touchMoved && elapsed<400){
-        activateCard();
-      }
+      if(!touchMoved&&Date.now()-touchStartTime<400) activateCard();
     },{passive:true});
   });
-  updateRoomTitleCursor();
   $('add-btn')?.addEventListener('click',()=>{
     const nick=prompt('추가할 멤버 닉네임');
     if(!nick?.trim())return;
     const n=nick.trim();
     if(members[n]){toast('이미 있는 닉네임이에요');return;}
     const i=Object.keys(members).length;
-    update(ref(db,`groups/${gid}/members`),{[n]:{nick:n, id:'@'+n.toLowerCase().replace(/\s+/g,''), emoji:EM[i%EM.length], cardBg:PRESETS[i%PRESETS.length], mbti:'', location:'', games:'', intro:'', isOwner:false}});
+    update(ref(db,`groups/${gid}/members`),{[n]:{nick:n,id:'@'+n.toLowerCase().replace(/\s+/g,''),emoji:EM[i%EM.length],cardBg:PRESETS[i%PRESETS.length],mbti:'',location:'',games:'',intro:'',isOwner:false}});
   });
 }
 
+function updateRoomTitleCursor(){
+  const m=members[me];
+  $('room-title').style.cursor=(m&&m.isOwner)?'pointer':'default';
+}
+
+// ── 프로필 시트 ──
 function openSheet(nick){
   openNick=nick; curTab=0;
-  // draft 초기화: 기존 값으로 세팅
   const m=members[nick]||{};
-  draft={mbti:m.mbti||'', location:m.location||'', games:m.games||'', intro:m.intro||''};
+  draft={mbti:m.mbti||'',location:m.location||'',games:m.games||'',intro:m.intro||''};
   document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',j===0));
   refreshSheet();
   $('profile-overlay').classList.add('open');
@@ -523,16 +618,14 @@ function refreshSheet(){
   $('sh-ava-badge').style.display=mine?'flex':'none';
   if($('sh-nm')) $('sh-nm').textContent=m.nick+(m.isOwner?' 👑':'');
   if($('sh-id')) $('sh-id').textContent=m.id;
-  // 저장 버튼: 본인만 표시
-  $('save-btn').style.display=mine?'block':'none';
   $('id-edit-btn').style.display=mine?'inline':'none';
+  $('save-btn').style.display=mine?'block':'none';
   if($('nick-inline-wrap')) $('nick-inline-wrap').style.display='none';
   renderTab();
 }
 
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
-    // 탭 이동 전에 현재 탭 값을 draft에 저장
     saveToDraft();
     curTab=parseInt(tab.dataset.tab);
     document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',j===curTab));
@@ -553,56 +646,64 @@ function renderTab(){
   let h='';
   if(curTab===0){
     if(mine){
-      // 본인: 바로 편집 가능
       const opts=MB.map(t=>`<option value="${t}"${draft.mbti===t?' selected':''}>${t}</option>`).join('');
       h=`<div class="field"><label>MBTI</label><select id="f-mbti"><option value="">선택 안 함</option>${opts}</select></div>
          <div class="field"><label>사는 곳</label><input id="f-loc" value="${esc(draft.location)}" placeholder="예: 서울, 부산..."/></div>`;
-    }else{
-      h=vr('MBTI',m.mbti)+vr('사는 곳',m.location);
-    }
+    }else{h=vr('MBTI',m.mbti)+vr('사는 곳',m.location);}
   }else if(curTab===1){
-    if(mine){
-      h=`<div class="field"><label>게임 / 관심사</label><textarea id="f-games" placeholder="예: 롤, 배그, 영화, 음악...">${esc(draft.games)}</textarea></div>`;
-    }else{
-      h=`<div class="vrow"><span class="vlbl">관심사</span><span class="vval${m.games?'':' mt'}" style="white-space:pre-wrap;">${m.games||'미입력'}</span></div>`;
-    }
+    if(mine){h=`<div class="field"><label>게임 / 관심사</label><textarea id="f-games" placeholder="예: 롤, 배그, 영화...">${esc(draft.games)}</textarea></div>`;}
+    else{h=`<div class="vrow"><span class="vlbl">관심사</span><span class="vval${m.games?'':' mt'}" style="white-space:pre-wrap;">${m.games||'미입력'}</span></div>`;}
   }else{
-    if(mine){
-      h=`<div class="field"><label>자기소개</label><textarea id="f-intro" placeholder="짧게 한 줄...">${esc(draft.intro)}</textarea></div>`;
-    }else{
-      h=`<div class="vval${m.intro?'':' mt'}" style="font-size:13px;line-height:1.7;white-space:pre-wrap;">${m.intro||'아직 소개가 없어요 😅'}</div>`;
-    }
+    if(mine){h=`<div class="field"><label>자기소개</label><textarea id="f-intro" placeholder="짧게 한 줄...">${esc(draft.intro)}</textarea></div>`;}
+    else{h=`<div class="vval${m.intro?'':' mt'}" style="font-size:13px;line-height:1.7;white-space:pre-wrap;">${m.intro||'아직 소개가 없어요 😅'}</div>`;}
   }
   $('tab-body').innerHTML=h;
 }
 
 function vr(l,v){return `<div class="vrow"><span class="vlbl">${l}</span><span class="vval${!v?' mt':''}">${v||'미입력'}</span></div>`;}
 
-// 저장 버튼 — 현재 탭 draft 저장 후 Firebase에 올리기
 $('save-btn').addEventListener('click',()=>{
-  saveToDraft(); // 현재 탭 값 draft에 반영
-  update(ref(db,`groups/${gid}/members/${openNick}`),{
-    mbti: draft.mbti,
-    location: draft.location,
-    games: draft.games,
-    intro: draft.intro,
-  })
-    .then(()=>toast('저장됐어요! ✅'))
-    .catch(e=>{toast('저장 실패');console.error(e);});
+  saveToDraft();
+  update(ref(db,`groups/${gid}/members/${openNick}`),{mbti:draft.mbti,location:draft.location,games:draft.games,intro:draft.intro})
+    .then(()=>toast('저장됐어요! ✅')).catch(()=>toast('저장 실패'));
 });
 
+$('close-btn').addEventListener('click',closeSheet);
+$('profile-overlay').addEventListener('click',e=>{if(e.target===$('profile-overlay'))closeSheet();});
+function closeSheet(){$('profile-overlay').classList.remove('open');openNick=null;}
+
+// 닉네임 인라인 수정
 $('id-edit-btn').addEventListener('click',()=>{
   const wrap=$('nick-inline-wrap');
-  if(!wrap) return;
   $('nick-inline-inp').value=members[openNick]?.nick||openNick;
   wrap.style.display=wrap.style.display==='none'?'block':'none';
   if(wrap.style.display==='block') $('nick-inline-inp').focus();
 });
 
-$('close-btn').addEventListener('click',closeSheet);
-$('profile-overlay').addEventListener('click',e=>{if(e.target===$('profile-overlay'))closeSheet();});
-function closeSheet(){$('profile-overlay').classList.remove('open'); openNick=null;}
+async function saveNickname(newNick){
+  if(!newNick?.trim()){toast('닉네임을 입력해주세요');return;}
+  newNick=newNick.trim();
+  const finalId='@'+newNick.toLowerCase().replace(/\s+/g,'');
+  const oldNick=me;
+  const oldData=members[oldNick]||{};
+  const newData={...oldData,nick:newNick,id:finalId};
+  await set(ref(db,`groups/${gid}/members/${newNick}`),newData);
+  if(oldNick!==newNick) await set(ref(db,`groups/${gid}/members/${oldNick}`),null);
+  me=newNick;
+  // 로컬 그룹 목록 업데이트
+  const idx=myGroups.findIndex(g=>g.gid===gid);
+  if(idx>=0){myGroups[idx].nick=newNick;saveGroups(myGroups);}
+  if($('nick-inline-wrap')) $('nick-inline-wrap').style.display='none';
+  toast('닉네임 변경됐어요! ✅');
+}
+$('nick-inline-save').addEventListener('click',()=>saveNickname($('nick-inline-inp').value));
+$('nick-inline-inp').addEventListener('keydown',e=>{
+  if(e.key==='Enter')saveNickname($('nick-inline-inp').value);
+  if(e.key==='Escape')$('nick-inline-wrap').style.display='none';
+});
+$('nick-inline-cancel').addEventListener('click',()=>$('nick-inline-wrap').style.display='none');
 
+// 꾸미기 피커
 $('sh-ava-wrap').addEventListener('click',()=>{
   if(!me||openNick!==me)return;
   const m=members[openNick];
@@ -612,25 +713,18 @@ $('sh-ava-wrap').addEventListener('click',()=>{
   updatePrev();
   $('p-overlay').classList.add('open');
 });
-
 function buildEG(){
   $('egrid').innerHTML=EM.map(e=>`<button class="ebtn${e===pE?' on':''}" data-e="${e}">${e}</button>`).join('');
-  document.querySelectorAll('.ebtn').forEach(b=>b.addEventListener('click',()=>{pE=b.dataset.e; buildEG(); updatePrev();}));
+  document.querySelectorAll('.ebtn').forEach(b=>b.addEventListener('click',()=>{pE=b.dataset.e;buildEG();updatePrev();}));
 }
 function buildPresets(){
   $('cpresets').innerHTML=PRESETS.map(c=>`<div class="cpre${c===pC?' on':''}" data-c="${c}" style="background:${c};"></div>`).join('');
-  document.querySelectorAll('.cpre').forEach(b=>b.addEventListener('click',()=>{pC=b.dataset.c; $('card-color-input').value=pC; buildPresets(); updatePrev();}));
+  document.querySelectorAll('.cpre').forEach(b=>b.addEventListener('click',()=>{pC=b.dataset.c;$('card-color-input').value=pC;buildPresets();updatePrev();}));
 }
-$('card-color-input').addEventListener('input',e=>{pC=e.target.value; buildPresets(); updatePrev();});
-function updatePrev(){
-  const m=members[openNick]||{};
-  $('p-prev-ava').textContent=pE; $('p-prev-ava').style.background=pC;
-  $('p-prev-card').style.background=pC;
-  $('p-prev-nm').textContent=m.nick||me;
-  $('p-prev-id').textContent=m.id||'';
-}
+$('card-color-input').addEventListener('input',e=>{pC=e.target.value;buildPresets();updatePrev();});
+function updatePrev(){const m=members[openNick]||{};$('p-prev-ava').textContent=pE;$('p-prev-ava').style.background=pC;$('p-prev-card').style.background=pC;$('p-prev-nm').textContent=m.nick||me;}
 $('pk-apply').addEventListener('click',()=>{
-  update(ref(db,`groups/${gid}/members/${openNick}`),{emoji:pE, cardBg:pC}).then(()=>toast('꾸미기 적용됐어요! ✅'));
+  update(ref(db,`groups/${gid}/members/${openNick}`),{emoji:pE,cardBg:pC}).then(()=>toast('꾸미기 적용됐어요! ✅'));
   $('p-overlay').classList.remove('open');
 });
 $('pk-cancel').addEventListener('click',()=>$('p-overlay').classList.remove('open'));
