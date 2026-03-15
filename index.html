@@ -614,7 +614,7 @@ async function doJoinGroup() {
   const code = $('code-inp').value.trim().toUpperCase();
   if (!code) { showToast('코드를 입력해주세요'); return; }
 
-  // 이미 참여 중인 그룹
+  // 이미 로컬에 저장된 그룹이면 바로 입장
   const existing = myGroups.find(g => g.gid === code);
   if (existing) { enterMain(existing.gid, existing.nick); return; }
 
@@ -623,33 +623,56 @@ async function doJoinGroup() {
     const data = snap.val();
     if (!data) { showToast('그룹을 찾을 수 없어요'); return; }
 
-    // 이 기기 UID로 이미 가입된 경우
-    const alreadyMember = data.members && data.members[myUid];
-    if (alreadyMember) {
-      myGroups.push({ gid: code, gname: data.name || code, nick: alreadyMember.nick });
+    // 이 기기 uid로 이미 가입된 경우 → 바로 입장
+    if (data.members && data.members[myUid]) {
+      const m = data.members[myUid];
+      myGroups.push({ gid: code, gname: data.name || code, nick: m.nick });
       saveGroups();
-      showToast('기존 프로필로 입장해요 😊');
-      enterMain(code, alreadyMember.nick);
+      enterMain(code, m.nick);
       return;
     }
 
-    const cnt = data.members ? Object.keys(data.members).length : 0;
-    if (cnt >= 8) { showToast('멤버가 꽉 찼어요 (최대 8명)'); return; }
-
+    // 닉네임 입력받기
     askNick(
       '그룹 입장',
       `"${data.name || code}"에서 사용할 닉네임을 입력하세요`,
       async nick => {
-        const md = {
-          uid: myUid, nick,
-          emoji: EMOJIS[cnt % EMOJIS.length],
-          cardBg: COLORS[cnt % COLORS.length],
-          mbti: '', location: '', games: '', intro: '', isOwner: false
-        };
-        await update(ref(db, `groups/${code}/members`), { [myUid]: md });
-        myGroups.push({ gid: code, gname: data.name || code, nick });
-        saveGroups();
-        enterMain(code, nick);
+        const allMembers = data.members ? Object.entries(data.members) : [];
+
+        // 같은 닉네임 멤버가 있는지 확인 (다른 기기에서 가입한 경우)
+        const sameNick = allMembers.find(([k, v]) => v.nick === nick);
+
+        if (sameNick) {
+          const [existingKey, existingData] = sameNick;
+          // 기존 프로필에 현재 uid 연결 (기존 키는 유지하되 uid만 업데이트)
+          // → 현재 기기 uid로 새 키 만들고 기존 키 삭제
+          const merged = { ...existingData, uid: myUid };
+          const updates = { [myUid]: merged };
+          if (existingKey !== myUid) updates[existingKey] = null;
+          await update(ref(db, `groups/${code}/members`), updates);
+          // 방장이었으면 owner도 업데이트
+          if (existingData.isOwner) {
+            await update(ref(db, `groups/${code}`), { owner: myUid });
+          }
+          myGroups.push({ gid: code, gname: data.name || code, nick });
+          saveGroups();
+          showToast('기존 프로필로 입장해요 😊');
+          enterMain(code, nick);
+        } else {
+          // 완전 새 멤버
+          const cnt = allMembers.length;
+          if (cnt >= 8) { showToast('멤버가 꽉 찼어요 (최대 8명)'); return; }
+          const md = {
+            uid: myUid, nick,
+            emoji: EMOJIS[cnt % EMOJIS.length],
+            cardBg: COLORS[cnt % COLORS.length],
+            mbti: '', location: '', games: '', intro: '', isOwner: false
+          };
+          await update(ref(db, `groups/${code}/members`), { [myUid]: md });
+          myGroups.push({ gid: code, gname: data.name || code, nick });
+          saveGroups();
+          enterMain(code, nick);
+        }
       }
     );
   } catch (e) { showToast('그룹을 찾을 수 없어요'); }
