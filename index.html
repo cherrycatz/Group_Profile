@@ -562,7 +562,12 @@ function renderGrid(){
       const myData=members[me];
       if(!myData||!myData.isOwner||nick===me)return;
       if(confirm(`'${nick}'님을 내보낼까요?`)){
-        set(ref(db,`groups/${gid}/members/${nick}`),null).then(()=>toast(`${nick}님을 내보냈어요`));
+        set(ref(db,`groups/${gid}/members/${nick}`),null).then(()=>{
+              toast(`${nick}님을 내보냈어요`);
+              // 멤버 0명이면 그룹 삭제
+              const remaining=Object.keys(members).filter(k=>k!==nick);
+              if(remaining.length===0) set(ref(db,`groups/${gid}`),null);
+            });
       }
     });
     c.addEventListener('touchstart',e=>{
@@ -573,7 +578,11 @@ function renderGrid(){
           const myData=members[me];
           if(myData&&myData.isOwner&&nick!==me){
             if(confirm(`'${nick}'님을 내보낼까요?`)){
-              set(ref(db,`groups/${gid}/members/${nick}`),null).then(()=>toast(`${nick}님을 내보냈어요`));
+              set(ref(db,`groups/${gid}/members/${nick}`),null).then(()=>{
+        toast(`${nick}님을 내보냈어요`);
+        const remaining=Object.keys(members).filter(k=>k!==nick);
+        if(remaining.length===0) set(ref(db,`groups/${gid}`),null);
+      });
             }
           }
         }
@@ -693,7 +702,7 @@ async function saveNickname(newNick){
   const finalId='@'+newNick.toLowerCase().replace(/\s+/g,'');
   const oldNick=me;
   const oldData=members[oldNick]||{};
-  const newData={...oldData, nick:newNick, id:finalId};
+  const newData={...oldData, nick:newNick, id:finalId, isOwner:oldData.isOwner||false};
   try{
     // 1) 새 닉네임으로 먼저 저장
     await set(ref(db,`groups/${gid}/members/${newNick}`), newData);
